@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Examination</title>
+
+    <style>
+        body {
+            background-color: lightgreen;
+            font-family: Arial;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        #examSection, #resultSection {
+            display: none;
+        }
+
+        .details {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            width: 220px;
+            margin: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #timer {
+            color: red;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .question {
+            color: blue;
+            font-style: italic;
+        }
+
+        #resultSection {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #result {
+            color: red;
+        }
+    </style>
+
+    <script>
+        let time = 120;
+        let timerInterval;
+
+        let studentName = "";
+        let registerNo = "";
+
+       function startExam() {
+
+    studentName =
+        document.getElementById("studentName").value.trim();
+
+    registerNo =
+        document.getElementById("registerNo").value.trim();
+
+    if (studentName === "" || registerNo === "") {
+        alert("Please enter your Name and Register Number!");
+        return;
+    }
+
+    // Display student name and register number above questions
+    document.getElementById("examStudentName").textContent = studentName;
+
+    document.getElementById("examRegisterNo").textContent = registerNo;
+
+    // Hide student details section
+    document.getElementById("detailsSection").style.display = "none";
+
+    // Show examination section
+    document.getElementById("examSection").style.display = "block";
+
+    updateTimer();
+
+    timerInterval = setInterval(function () {
+
+        if (time > 0) {
+            time--;
+            updateTimer();
+        } else {
+            clearInterval(timerInterval);
+            alert("Time is up! Your exam will be submitted.");
+            submitExam("Time Up");
+        }
+
+    }, 1000);
+}
+
+        function updateTimer() {
+
+            let minutes = Math.floor(time / 60);
+            let seconds = time % 60;
+
+            document.getElementById("timer").textContent =
+                "Time Left: " + minutes + ":" +
+                (seconds < 10 ? "0" : "") + seconds;
+        }
+
+        function calculateResult() {
+
+            let score = 0;
+
+            let answers = {
+                q1: "a",
+                q2: "b",
+                q3: "c",
+                q4: "c",
+                q5: "b",
+                q6: "c",
+                q7: "a",
+                q8: "b",
+                q9: "c",
+                q10: "b"
+            };
+
+            for (let question in answers) {
+
+                let selected = document.querySelector(
+                    'input[name="' + question + '"]:checked'
+                );
+
+                if (selected && selected.value === answers[question]) {
+                    score++;
+                }
+            }
+
+            return score;
+        }
+
+        function submitExam(status = "Submitted") {
+
+            // Prevent multiple submissions
+            if (document.getElementById("examSection").style.display === "none") {
+                return;
+            }
+
+            clearInterval(timerInterval);
+
+            let score = calculateResult();
+           document.getElementById("examSection").style.display = "none";
+
+            document.getElementById("resultSection").style.display = "block";
+
+            document.getElementById("studentResult").innerHTML =
+                "<b>Student Name:</b> " + escapeHTML(studentName) + "<br><br>" +
+                "<b>Register Number:</b> " + escapeHTML(registerNo) + "<br><br>" +
+                "<b>Total Marks:</b> " + score + " / 10<br><br>" +
+                "<b>Exam Status:</b> " + status;
+
+            document.getElementById("result").innerHTML =
+                "Your Score is: " + score + " / 10";
+        }
+
+        function escapeHTML(value) {
+            return value.replace(/[&<>"']/g, function(char) {
+                return {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                }[char];
+            });
+        }
+
+    </script>
+</head>
+
+<body>
+
+    <h2><b>ONLINE EXAMINATION</b></h2>
+
+    <!-- STUDENT DETAILS SECTION -->
+
+    <div id="detailsSection" class="details">
+
+        <h3>Student Details</h3>
+
+        <label>Student Name:</label><br>
+
+        <input type="text" id="studentName"
+               placeholder="Enter Your Name"><br>
+
+        <label>Register Number:</label><br>
+
+        <input type="text" id="registerNo"
+               placeholder="Enter Register Number"><br><br>
+
+        <button type="button" onclick="startExam()">
+            Start Exam
+        </button>
+
+    </div>
+
+
+    <!-- EXAMINATION SECTION -->
+
+    <div id="examSection">
+
+    <h3 id="timer">Time Left: 2:00</h3>
+
+    <!-- STUDENT DETAILS ABOVE QUESTIONS -->
+    <div style="
+        background-color: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 2px solid green;
+        text-align: center;
+    ">
+
+        <h3>Student Examination Details</h3>
+
+        <p>
+            <b>Student Name:</b>
+            <span id="examStudentName"></span>
+        </p>
+
+        <p>
+            <b>Register Number:</b>
+            <span id="examRegisterNo"></span>
+        </p>
+
+    </div>
+
+    <form id="examForm">
+
+            <p class="question">1. Which language is used for web development?</p>
+
+            <input type="radio" name="q1" value="a"> HTML<br>
+            <input type="radio" name="q1" value="b"> Python<br>
+            <input type="radio" name="q1" value="c"> C<br>
+
+            <p class="question">2. Which is a JavaScript output method?</p>
+
+            <input type="radio" name="q2" value="a"> scanf()<br>
+            <input type="radio" name="q2" value="b"> alert()<br>
+            <input type="radio" name="q2" value="c"> printf()<br>
+
+            <p class="question">3. Which symbol is used for comments in JavaScript?</p>
+
+            <input type="radio" name="q3" value="a"> #<br>
+            <input type="radio" name="q3" value="b"> ?<br>
+            <input type="radio" name="q3" value="c"> //<br>
+
+            <p class="question">4. Which keyword declares a variable that cannot be reassigned?</p>
+
+            <input type="radio" name="q4" value="a"> var<br>
+            <input type="radio" name="q4" value="b"> let<br>
+            <input type="radio" name="q4" value="c"> const<br>
+
+            <p class="question">5. What will typeof 42 return in JavaScript?</p>
+
+            <input type="radio" name="q5" value="a"> integer<br>
+            <input type="radio" name="q5" value="b"> number<br>
+            <input type="radio" name="q5" value="c"> float<br>
+
+            <p class="question">6. What is the index of the first element in an array?</p>
+
+            <input type="radio" name="q6" value="a"> 1<br>
+            <input type="radio" name="q6" value="b"> -1<br>
+            <input type="radio" name="q6" value="c"> 0<br>
+
+            <p class="question">7. Which keyword sends a value back from a function?</p>
+
+            <input type="radio" name="q7" value="a"> return<br>
+            <input type="radio" name="q7" value="b"> send<br>
+            <input type="radio" name="q7" value="c"> give<br>
+
+            <p class="question">8. What does "5" + 3 evaluate to?</p>
+
+            <input type="radio" name="q8" value="a"> NaN<br>
+            <input type="radio" name="q8" value="b"> "53"<br>
+            <input type="radio" name="q8" value="c"> 8<br>
+
+            <p class="question">9. What is the result of 10 % 3?</p>
+
+            <input type="radio" name="q9" value="a"> 3.33<br>
+            <input type="radio" name="q9" value="b"> 3<br>
+            <input type="radio" name="q9" value="c"> 1<br>
+
+            <p class="question">10. Which array method adds elements to the end?</p>
+
+            <input type="radio" name="q10" value="a"> shift()<br>
+            <input type="radio" name="q10" value="b"> push()<br>
+            <input type="radio" name="q10" value="c"> unshift()<br><br>
+
+            <center>
+                <button type="button"
+                        onclick="submitExam('Submitted')">
+                    Submit Exam
+                </button>
+            </center>
+
+        </form>
+
+    </div>
+
+
+    <!-- RESULT SECTION -->
+
+    <div id="resultSection">
+
+        <h2>EXAMINATION RESULT</h2>
+
+        <hr>
+
+        <h3 id="studentResult"></h3>
+
+        <h2 id="result"></h2>
+
+        <hr>
+
+        <h3>Thank You for Attending the Examination!</h3>
+
+    </div>
+
+</body>
+</html>
