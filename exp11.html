@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Form</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background-color: lightblue;
+        }
+
+        .container {
+            width: 400px;
+            margin: 50px auto;
+            padding: 25px;
+            background-color: pink;
+            border: 1px solid gray;
+            border-radius: 5px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+
+        input:disabled {
+            background-color: lightgray;
+            cursor: not-allowed;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 25px;
+            cursor: pointer;
+            background-color: green;
+            color: white;
+            border: none;
+        }
+
+        button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+
+        .message {
+            color: red;
+            font-size: 12px;
+        }
+
+    </style>
+
+    <script>
+
+        function updateForm() {
+
+            let name = document.getElementById("name").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value;
+            let phone = document.getElementById("phone").value;
+            let dob = document.getElementById("dob").value;
+
+            // VALIDATION PATTERNS
+            let namePattern = /^[A-Za-z ]+$/;
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let phonePattern = /^[0-9]{10}$/;
+
+            // CHECK EACH FIELD
+            let validName =
+                name !== "" && namePattern.test(name);
+
+            let validEmail =
+                validName && emailPattern.test(email);
+
+            let validPassword =
+                validEmail && password.length >= 6;
+
+            let validPhone =
+                validPassword && phonePattern.test(phone);
+
+            let validDOB =
+                validPhone &&
+                dob !== "" &&
+                new Date(dob) <= new Date();
+
+            // ENABLE OR DISABLE FIELDS IN ORDER
+
+            document.getElementById("email").disabled =
+                !validName;
+
+            document.getElementById("password").disabled =
+                !validEmail;
+
+            document.getElementById("phone").disabled =
+                !validPassword;
+
+            document.getElementById("dob").disabled =
+                !validPhone;
+
+            // ENABLE REGISTER BUTTON ONLY WHEN ALL ARE VALID
+
+            document.getElementById("registerBtn").disabled =
+                !validDOB;
+
+            // DISPLAY STATUS MESSAGES
+
+            document.getElementById("nameMsg").textContent =
+                name !== "" && !validName
+                ? "Enter a valid name"
+                : "";
+
+            document.getElementById("emailMsg").textContent =
+                email !== "" && !validEmail && validName
+                ? "Enter a valid email address"
+                : "";
+
+            document.getElementById("passwordMsg").textContent =
+                password !== "" && !validPassword && validEmail
+                ? "Password must contain at least 6 characters"
+                : "";
+
+            document.getElementById("phoneMsg").textContent =
+                phone !== "" && !validPhone && validPassword
+                ? "Enter a valid 10 digit phone number"
+                : "";
+
+            document.getElementById("dobMsg").textContent =
+                dob !== "" && !validDOB && validPhone
+                ? "Enter a valid date of birth"
+                : "";
+
+        }
+
+
+        // FINAL FORM VALIDATION
+
+        function validateForm() {
+
+            updateForm();
+
+            let dob = document.getElementById("dob").value;
+
+            if (dob === "" || new Date(dob) > new Date()) {
+                alert("Please enter a valid date of birth!");
+                return false;
+            }
+
+            alert("Registration Successful!");
+
+            return false;
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>REGISTRATION FORM</h2>
+
+        <form onsubmit="return validateForm()">
+
+            <!-- NAME -->
+
+            <label><b>Full Name:</b></label>
+
+            <input type="text"
+                   id="name"
+                   placeholder="Enter your full name"
+                   oninput="updateForm()">
+
+            <span class="message" id="nameMsg"></span>
+
+
+            <!-- EMAIL -->
+
+            <label><b>Email:</b></label>
+
+            <input type="text"
+                   id="email"
+                   placeholder="Enter your email address"
+                   disabled
+                   oninput="updateForm()">
+
+            <span class="message" id="emailMsg"></span>
+
+
+            <!-- PASSWORD -->
+
+            <label><b>Password:</b></label>
+
+            <input type="password"
+                   id="password"
+                   placeholder="Enter your password"
+                   disabled
+                   oninput="updateForm()">
+
+            <span class="message" id="passwordMsg"></span>
+
+
+            <!-- PHONE NUMBER -->
+
+            <label><b>Phone Number:</b></label>
+
+            <input type="text"
+                   id="phone"
+                   placeholder="Enter your 10-digit phone number"
+                   maxlength="10"
+                   disabled
+                   oninput="updateForm()">
+
+            <span class="message" id="phoneMsg"></span>
+
+
+            <!-- DATE OF BIRTH -->
+
+            <label><b>Date of Birth:</b></label>
+
+            <input type="date"
+                   id="dob"
+                   disabled
+                   oninput="updateForm()">
+
+            <span class="message" id="dobMsg"></span>
+
+
+            <!-- REGISTER BUTTON -->
+
+            <button type="submit" id="registerBtn" disabled>
+                <b>Register</b>
+            </button>
+
+        </form>
+
+    </div>
+
+</body>
+</html>
